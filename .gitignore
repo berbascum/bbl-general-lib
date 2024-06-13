@@ -1,0 +1,6 @@
+debian/.debhelper/
+debian/bbl-general-lib.substvars
+debian/bbl-general-lib/
+debian/debhelper-build-stamp
+debian/files
+out-bbl-general-lib
