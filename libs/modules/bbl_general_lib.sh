@@ -333,7 +333,7 @@ fn_bbgl_parse_file_section() {
 	    ## Utilitzat per seccions de config file
 	    debug2 "bbgl - line original: ${line}"
 	    line_filtered=$(echo "${line}" | grep -v '^\[' | grep -v '^#')
-	    debug2 "bbgl - line filtered: ${line}"
+	    debug2 "bbgl - line filtered: ${line_filtered}"
 	    ## Evaluate filtered line if not empty: 
 	    if [ -n "${line_filtered}" ]; then
 	        debug2 "bbgl - Evaluating line: "${line}""
