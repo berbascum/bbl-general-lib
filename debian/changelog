@@ -1,6 +1,9 @@
-bbl-general-lib (1.0.0.1+git20240613231557.537083b.testing) testing; urgency=medium
+bbl-general-lib (1.1.0.1+git20240616192245.90cd50e.testing) testing; urgency=medium
 
   [berbascum]
+  * (90cd50e) Rename: main src was renamed and updated with some header extra info to use with bbl_generan_parse_header_section feature 
+  * (6720545) Debug: Updated some debug code 
+  * (84361ce) Build "testing/1.0.0.1" version: debian/changelog and other version related upgrades 
   * (537083b) Add .gitignore 
   * (8f3ac6c) Move main lib to libs/modules dir 
   * (8e02f5c) Add debian pckaging 
@@ -39,4 +42,4 @@ bbl-general-lib (1.0.0.1+git20240613231557.537083b.testing) testing; urgency=med
   * (c666fd6) Update: stdout messages on some functions to be all aligned 
   * (85d525a) New: Initial libs moved from berb-docker-mgr package to be shared with other scripts 
 
- -- berbascum <berbascum@ticv.cat>  Thu, 13 Jun 2024 23:15:57 +0200
+ -- berbascum <berbascum@ticv.cat>  Sun, 16 Jun 2024 19:22:45 +0200
