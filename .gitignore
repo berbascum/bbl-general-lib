@@ -5,3 +5,4 @@ debian/debhelper-build-stamp
 debian/files
 out-bbl-general-lib
 bdm-build.conf
+update-bash-lib-version-strings.log
