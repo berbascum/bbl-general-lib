@@ -41,6 +41,7 @@ fn_header_info() {
     BIN_SRC_EXT="sh"
     BIN_NAME="bbl_general_lib"
     TOOL_VERSION="1.1.0.1"
+    TOOL_VERSION_INT="1101"
     TOOL_RELEASE="testing"
     URGENCY='optional'
     TESTED_BASH_VER='5.2.15'
