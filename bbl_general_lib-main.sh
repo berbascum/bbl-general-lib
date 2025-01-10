@@ -158,8 +158,8 @@ fn_bbgl_check_args_search_flag() {
         flag_found=$(echo "${flag}" | grep "\-\-${flag_name}=")
         if [ -n "${flag_found}" ]; then
             FLAG_FOUND_VALUE=$(echo "${flag_found}" | awk -F'=' '{print $2}')
-	    debug "bbl-general: \"${flag_name}\" flag = \"${FLAG_FOUND_VALUE}\" found"
-	    break
+	        debug "bbl-general: \"${flag_name}\" flag = \"${FLAG_FOUND_VALUE}\" found"
+	        break
         fi
     done
 }
@@ -176,13 +176,13 @@ fn_bbgl_check_bash_ver() {
     IFS=$' \t\n'
     #IFS=$IFS_BKP
     if [[ $v_major -lt $vt_major ]] || \
-           ([[ $v_major -eq $vt_major ]] && [[ $v_minor -lt $vt_minor ]]) || \
-           ([[ $v_major -eq $vt_major ]] && [[ $v_minor -eq $vt_minor ]] \
-	       && [[ $v_patch -lt $vt_patch ]]); then
-    	clear
+        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -lt $vt_minor ]]) || \
+        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -eq $vt_minor ]] \
+	    && [[ $v_patch -lt $vt_patch ]]); then
+        clear
         WARN "bbl-general: Bash version detected is lower than the tested version"
         warn "bbl-general: If errors are found, try upgrading bash to \"${TESTED_BASH_VER}\" version"
-	pause "bbl-general: Press Inro to continue"
+	    pause "bbl-general: Press Inro to continue"
     else
         INFO "bbl-general: Bash version requirements are fine"
     fi
@@ -202,7 +202,7 @@ fn_ask_write_not_set_vars_in_file() {
 	   ask "bbl-general: \"${var_not_set}\" name is not configured. Please type it: "
            [ -n "${answer}" ] && sed -i \
 	       "s/${var_not_set}/${var_not_set}\"${answer}\"/g" "${install_file}"
-	fi
+	    fi
     done
     source "${dev_info_install_fullpath}/${device_info_filename}"
 }
@@ -213,12 +213,12 @@ fn_ask_write_not_set_vars_in_file() {
 fn_bbgl_ifs_2_newline() {
     ## Config ICF to set array with spaced strings on each position value.
     if [ "${1}" == "" ]; then
-	ERROR "bbl-general: fn_bssf_ifs_2_newline param requerit."
+	    ERROR "bbl-general: fn_bssf_ifs_2_newline param requerit."
     elif [ "${1}" == "activa" ]; then
-	#IFS_BACKUP=$IFS
-	IFS=$'\n'
+	    #IFS_BACKUP=$IFS
+	    IFS=$'\n'
     elif [ "${1}" == "desactiva" ]; then
-	IFS=$IFS_BACKUP
+	    IFS=$IFS_BACKUP
     fi
 }
 
@@ -288,29 +288,31 @@ fn_bbgl_parse_file_section() {
     [ -z "${parse_action}" ] && ERROR "bbl-general: A parse action is needed as argument \"3\""
     ## Configuration of "HEADER_SECTION"
     if [ "$section" == "HEADER_SECTION" ]; then
-	## file_2_parse
-	file_2_parse="$1"
-	[ ! -f "${file_2_parse}" ] \
-	    && ERROR "bbl-general: file_2_parse ${file_2_parse} not found"
-	## parse search options
-	str_start="#\[${section}\]"
-	str_end="#\[HEADER_END\]"
-	how_many_vars="$4"
-	[ -z "${how_many_vars}" ] \
-	    && ERROR "bbl-general: A search var mode all|one|first is needed as arg \"4\""
+        ## file_2_parse
+        file_2_parse="$1"
+        [ ! -f "${file_2_parse}" ] \
+            && ERROR "bbl-general: file_2_parse \"${file_2_parse}\" not found"
+        ## parse search options
+        str_start="#\[${section}\]"
+        str_end="#\[HEADER_END\]"
+        how_many_vars="$4"
+        [ -z "${how_many_vars}" ] \
+            && ERROR "bbl-general: A search var mode all|one|first is needed as arg \"4\""
         if [ "${how_many_vars}" == "one" ]; then
-	    var_2_search="$5"
+            var_2_search="$5"
             [ -z "${var_2_search}" ] \
-		&& ERROR "bbl-general: A var name as argument \"5\" is required"
+                && ERROR "bbl-general: A var name as argument \"5\" is required"
         fi
     ## Configuration of any other section than "HEADER_SECTION"
     elif [ "$section" != "HEADER_SECTION" ]; then
-	## file_2_parse
-	file_2_parse=$(eval "echo \${"${1}"_FULLPATH_FILENAME}")
-	[ ! -f "${file_2_parse}" ] && ERROR "file_2_parse ${file_2_parse} not found"
-	## parse search options
-	str_start="\[$section\]"
-	str_end="\["
+        ## file_2_parse try default
+        file_2_parse=$(eval \
+            "echo \${"${1}"_FULLPATH_FILENAME}")
+        [ -f "${file_2_parse}" ] \
+            || ERROR "file_2_parse ${file_2_parse} not found"
+        ## parse search options
+        str_start="\[$section\]"
+        str_end="\["
     fi
     INFO "bbl-general: Parsing \"${section}\" section: \"${parse_action}\" on \"${file_2_parse}\""
     section_found="0"
@@ -320,77 +322,78 @@ fn_bbgl_parse_file_section() {
     ## Change IFS to avoid line splitting on spaces in lines
     fn_bbgl_ifs_2_newline activa
     for line in $(cat "${file_2_parse}"); do
-	if [ ${section_found} -eq "0" ]; then
-        debug2 "bbl-general:  Cercant la secció \"${section}\""
-	    # section_found=$(echo "${line}" | grep -c "${str_start}")
-	    section_found=$(echo "${line}" | grep -c "${str_start}")
-	    if [ ${section_found} -eq "1" ]; then
-		debug2 "bbl-general: Trobat Start de secció \"${section}\""
-	    elif [ ${section_found} -eq "0" ]; then
-		debug2 "bbl-general: Encara NO trobada la secció ${section}"
-	    fi
-	fi
-	## Until not yet in section_end, the bellow if statment will search for it
-	## on every line of loop
+        if [ ${section_found} -eq "0" ]; then
+            debug2 "bbl-general:  Cercant la secció \"${section}\""
+            # section_found=$(echo "${line}" | grep -c "${str_start}")
+            section_found=$(echo "${line}" | grep -c "${str_start}")
+            if [ ${section_found} -eq "1" ]; then
+                debug2 "bbl-general: Trobat Start de secció \"${section}\""
+            elif [ ${section_found} -eq "0" ]; then
+                debug2 "bbl-general: Encara NO trobada la secció ${section}"
+            fi
+        fi
+        ## Until not yet in section_end, the bellow if statment will search for it
+        ## on every line of loop
         ## When section_end found, a break will be performed
         if [ "${section_found}" -eq "1" -a "${section_end}" -ne "1" ]; then
             debug2 "bbl-general: section_end var after 1st check = ${section_end}"
-	    ## Search section_end pattern in var
-	    section_end=$(echo "${line}" | grep "^${str_end}" | grep -c -v "${section}")
+            ## Search section_end pattern in var
+            section_end=$(echo "${line}" | grep "^${str_end}" | grep -c -v "${section}")
             debug2 "bbl-general: section_end var search again result = ${section_end}"
-	    [ "${section_end}" -eq "1" ] \
-		&& debug2 "bbl-general: section end FOUND after 2nd check: \"${section}\"" && break
-	    ## When section_end found, curr line (section tag) will not be processed
-	    ## thanks to grep -v
-	fi
-	## Action: "load_section" ##
-	if [ "${parse_action}" == "load_section" ]; then
-	    ## Utilitzat per seccions de config file
-	    debug2 "bbl-general: line original: ${line}"
-	    line_filtered=$(echo "${line}" | grep -v '^\[' | grep -v '^#')
-	    debug2 "bbl-general: line filtered: ${line_filtered}"
-	    ## Evaluate filtered line if not empty: 
-	    if [ -n "${line_filtered}" ]; then
-	        debug2 "bbl-general: Evaluating line: "${line}""
-		eval ${line_filtered}
-	    fi
-	## Action: "ask_empty_vars" ##
-	elif [ "${parse_action}" == "ask_empty_vars" ]; then
-	    ## Utilitzat per seccions de config file
-	    debug2 "bbl-general: line original: ${line}"
-	    line_filtered=$(echo "${line}" | grep -v '^\[' | grep -v '^#')
-	    debug2 "bbl-general: line filtered: ${line}"
-	    ## Evaluate filtered line if not empty: 
-	    if [ -n "${line_filtered}" ]; then
+            [ "${section_end}" -eq "1" ] \
+                && debug2 "bbl-general: section end FOUND after 2nd check: \"${section}\"" && break
+            ## When section_end found, curr line (section tag) will not be processed
+            ## thanks to grep -v
+        fi
+        ## Action: "load_section" ##
+        if [ "${parse_action}" == "load_section" ]; then
+            ## Utilitzat per seccions de config file
+            debug2 "bbl-general: line original: ${line}"
+            line_filtered=$(echo "${line}" | grep -v '^\[' | grep -v '^#')
+            debug2 "bbl-general: line filtered: ${line_filtered}"
+            ## Evaluate filtered line if not empty: 
+            if [ -n "${line_filtered}" ]; then
+                debug2 "bbl-general: Evaluating line: "${line}""
+                eval ${line_filtered}
+            fi
+        ## Action: "ask_empty_vars" ##
+        elif [ "${parse_action}" == "ask_empty_vars" ]; then
+            ## Utilitzat per seccions de config file
+            debug2 "bbl-general: line original: ${line}"
+            line_filtered=$(echo "${line}" \
+                | grep -v '^\[' | grep -v '^#')
+            debug2 "bbl-general: line filtered: ${line}"
+            ## Evaluate filtered line if not empty: 
+            if [ -n "${line_filtered}" ]; then
                 var_not_set=$(echo "${line_filtered}" \
-		    | grep -v "#" | grep -v "=\"" | grep "=")
-	        if [ -n "${var_not_set}" ]; then
-	            debug2 "bbl-general: var_not_set = $var_not_set"
-	            ASK "bbl-general: \"${var_not_set}\" name is not configured. Please type it: "
+                    | grep -v "#" | grep -v "=\"" | grep "=")
+                if [ -n "${var_not_set}" ]; then
+                    debug2 "bbl-general: var_not_set = $var_not_set"
+                    ASK "bbl-general: \"${var_not_set}\" name is not configured. Please type it: "
                     [ -n "${answer}" ] && sed -i \
-	                "s/${var_not_set}/${var_not_set}\"${answer}\"/g" "${file_2_parse}"
-	        fi
-	        debug2 "bbl-general: Evaluating line: "${line}""
-		eval ${line_filtered}
-	    fi
-	# Action: "search_varnames" ##
+                        "s/${var_not_set}/${var_not_set}\"${answer}\"/g" "${file_2_parse}"
+                fi
+                debug2 "bbl-general: Evaluating line: "${line}""
+                eval ${line_filtered}
+            fi
+        # Action: "search_varnames" ##
         elif [ "${parse_action}" == "search_varnames" ]; then
             # Arg "how_many_vars = one"
-	    if [ "${how_many_vars}" == "one" ]; then
-		## Check if the varname specified as the fifth fn arg is found
-		## in the specified file and section
-		line_filtered=$(echo "${line}" | grep "${var_filter}")
+            if [ "${how_many_vars}" == "one" ]; then
+                ## Check if the varname specified as the fifth fn arg is found
+                ## in the specified file and section
+                line_filtered=$(echo "${line}" | grep "${var_filter}")
                 debug2 "bbl-general: var_filter val: ${var_filter}"
                 if [ -n "${line_filtered}" ]; then
                     debug2 "bbl-general: Found var \"${line_filtered}\" using filter \"${var_filter}\""
                     debug2 "             Adding it to \"arr_vars_found\""
-		    arr_vars_found+=( "${line_filtered}" )
+                    arr_vars_found+=( "${line_filtered}" )
                     break
-		fi
+                fi
             # Arg "how_many_vars = list"
             elif [ "${how_many_vars}" == "list" ]; then
-		## Check if the varnames in a list from an array are found
-		## in the specified file and section
+                ## Check if the varnames in a list from an array are found
+                ## in the specified file and section
                 ## Start of scan lines loop
                 for var_filter in  "${arr_vars_filter[@]}"; do
                     line_filtered=$(echo "${line}" | grep "${var_filter}")
@@ -400,17 +403,18 @@ fn_bbgl_parse_file_section() {
                     if [ -n "${line_filtered}" ]; then
                         debug2 "bbl-general: Found var \"${line_filtered}\" using filter \"${var_filter}\""
                         debug2 "             Adding it to \"arr_vars_found\""
-		        arr_vars_found+=( "${line_filtered}" )
-		    fi
-		done
+                        arr_vars_found+=( "${line_filtered}" )
+                    fi
+                done
             # Arg "how_many_vars = all"
-	    elif [ "${how_many_vars}" == "all" ]; then
-		## Get all vars in the specified file and section and put them into an array
-	        line_filtered=$(echo "${line}" | grep -v '^\[' | grep -v '^#')
+            elif [ "${how_many_vars}" == "all" ]; then
+                ## Get all vars in the specified file and section and put them into an array
+                line_filtered=$(echo "${line}" \
+                    | grep -v '^\[' | grep -v '^#')
                 if [ -n "${line_filtered}" ]; then
                     debug2 "bbl-general: Found var \"${line_filtered}\""
                     debug2 "             Adding it to \"arr_vars_found\""
-		    arr_lines_found+=( "${line_filtered}" )
+                    arr_lines_found+=( "${line_filtered}" )
                     arr_vars_found+=( "$(echo "${line_filtered}" | grep '=')" )
                 fi
             fi
@@ -418,7 +422,7 @@ fn_bbgl_parse_file_section() {
     done
     ## Print msg if the specified section was not found after looping the entire file
     if [ ${section_found} -eq "0" ]; then
-	error "bbl-general: Section ${section} not found in \"${file_2_parse}\" file"
+        error "bbl-general: Section ${section} not found in \"${file_2_parse}\" file"
     fi
 
     ## Restore IFS
