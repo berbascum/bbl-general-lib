@@ -6,3 +6,4 @@ debian/files
 out-bbl-general-lib
 bdm-build.conf
 update-bash-lib-version-strings.log
+commit_msg
