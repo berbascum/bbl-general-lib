@@ -307,7 +307,18 @@ fn_bbgl_parse_file_section() {
     elif [ "$section" != "HEADER_SECTION" ]; then
         ## file_2_parse try default
         file_2_parse=$(eval \
-            "echo \${"${1}"_FULLPATH_FILENAME}")
+             "echo \${"${1}"_FULLPATH_FILENAME}")
+        ## file_2_parse try alternatives
+        if [ ! -f "${file_2_parse}" ]; then
+            file_2_parse=$(eval \
+                "echo \${"${1}"_LOCAL_CFG_FILE}")
+        fi
+        ## DEBUG: ##
+        #if [ "${section}" == "bblgit-check-ref" ]; then
+        #    info "file_2_parse = ${file_2_parse}"
+        #    pause "Seccio bblgit-check-ref processant..."
+        #fi
+        ## If file_2_parse still empty, error
         [ -f "${file_2_parse}" ] \
             || ERROR "file_2_parse ${file_2_parse} not found"
         ## parse search options
