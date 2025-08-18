@@ -48,6 +48,8 @@ fn_header_info() {
 }
 #[HEADER_END]
 
+## Enable sudo for non root users
+fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
 
 ## Config log
 fn_bbgl_config_log() {
@@ -191,8 +193,6 @@ fn_bbgl_check_bash_ver() {
 ######################
 ## Config functions ##
 ######################
-fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
-
 fn_ask_write_not_set_vars_in_file() {
     ## Search for empty vars in the device config file
     for var in $(cat "${install_file}"); do
