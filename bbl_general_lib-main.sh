@@ -48,6 +48,8 @@ fn_header_info() {
 }
 #[HEADER_END]
 
+if [ "${BBL_LOAD_STAGE}" == "log-level" ] \
+|| [ -z "${BBL_LOAD_STAGE}" ]; then
 ## Enable sudo for non root users
 fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
 
@@ -165,7 +167,9 @@ fn_bbgl_check_args_search_flag() {
         fi
     done
 }
+fi
 
+if [ -z "${BBL_LOAD_STAGE}" ]; then
 #######################
 ## Control functions ##
 #######################
@@ -473,3 +477,4 @@ fn_bbgl_parse_file_section() {
 
 CALL_SAMPLES
 }
+fi
