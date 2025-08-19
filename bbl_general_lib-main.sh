@@ -53,87 +53,9 @@ if [ "${BBL_LOAD_STAGE}" == "log-level" ] \
 ## Enable sudo for non root users
 fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
 
-## Config log
-fn_bbgl_config_log() {
-    ## Prepare log file
-    [ -z "${LOG_FULLPATH}" ] && LOG_FULLPATH="${HOME}/logs/${TOOL_NAME}"
-    [ ! -d "${LOG_FULLPATH}" ] && mkdir -p "${LOG_FULLPATH}"
-    LOG_FILE="${TOOL_NAME}.log"
-    echo > "${LOG_FULLPATH}/${LOG_FILE}"
-}
-
-#####################
-## Print functions ##
-#####################
-error() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
-        echo "ERROR: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 10
-    fi
-}
-ERROR() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
-        echo; echo "ERROR: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 1
-    fi
-}
-abort() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
-        echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 10
-    fi
-}
-ABORT() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
-        echo; echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 10
-    fi
-}
-info() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
-        echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-INFO() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
-        echo; echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-warn() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
-        echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-WARN() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
-        echo; echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-debug() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
-        echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-DEBUG() {
-    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
-        echo; echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-debug2() {
-    if [[ $LOG_LEVEL -eq $LOG_LEVEL_DEBUG2 ]]; then
-        echo "DEBUG2: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-
-ECHO() { echo; echo "$*"; }
-ask() { read -p "$*" answer; }
-ASK() { echo; read -p "$*" answer; }
-pause() { read -p "$*"; }
-PAUSE() { echo; read -p "$*"; }
-
-########################
-## loglevel functions ##
-########################
+####################################
+## debug functions: log/log-level ##
+####################################
 fn_bbgl_config_log_level() {
     ## Set the log levels
     readonly LOG_LEVEL_ERROR=0
@@ -148,8 +70,117 @@ fn_bbgl_config_log_level() {
     [ -n "${FLAG_FOUND_VALUE}" ] && LOG_LEVEL="${FLAG_FOUND_VALUE}"
     ## Set the default log-level if not defined yet
     [ -z "${LOG_LEVEL}" ] && LOG_LEVEL=${LOG_LEVEL_INFO}
-    debug "bbl-general: After check_args_LOG_LEVEL = ${LOG_LEVEL}"
 }
+
+fn_bbgl_config_log() {
+    ## Search for the log-level flag in the arguments
+    flag_name="log-enable" fn_bbgl_check_args_search_flag $@
+    [ -n "${FLAG_FOUND}" ] || return 0
+    ## Prepare log file
+    debug "bbl-general: Configuring log.."
+    [ -z "${LOG_FULLPATH}" ] && LOG_FULLPATH="${HOME}/logs/${TOOL_NAME}"
+    [ -d "${LOG_FULLPATH}" ] ||  mkdir -pv "${LOG_FULLPATH}"
+    LOG_FILE="${TOOL_NAME}.log"
+    echo > "${LOG_FULLPATH}/${LOG_FILE}"
+    LOG_ENABLED="true"
+}
+
+#############################
+## debug functions: prints ##
+#############################
+loglevel_message_print() {
+    ## Prints a message to the stdout with a loglevel prefix
+    ## --log-enable or LOG_ENABLED=true sends the message
+    ## to the log file as well.
+    if [ "${LOG_ENABLED}" == "true" ]; then
+        echo "${LOG_LEVEL_MSG}" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    else
+        #echo "${LOG_LEVEL_MSG}: $*"
+        echo "${LOG_LEVEL_MSG}"
+    fi
+}
+
+error() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
+        LOG_LEVEL_MSG="ERROR: $*"
+        loglevel_message_print
+        exit 1
+    fi
+}
+ERROR() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
+        LOG_LEVEL_MSG="ERROR: $*"
+        echo ""
+        loglevel_message_print
+        exit 1
+    fi
+}
+abort() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
+        LOG_LEVEL_MSG="ABORT: $*"
+        loglevel_message_print
+        exit 10
+    fi
+}
+ABORT() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
+        LOG_LEVEL_MSG="ABORT: $*"
+        echo ""
+        loglevel_message_print
+        exit 10
+    fi
+}
+info() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
+        LOG_LEVEL_MSG="INFO: $*"
+        loglevel_message_print
+    fi
+}
+INFO() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
+        LOG_LEVEL_MSG="INFO: $*"
+        echo ""
+        loglevel_message_print
+    fi
+}
+warn() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
+        LOG_LEVEL_MSG="WARN: $*"
+        loglevel_message_print
+    fi
+}
+WARN() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
+        LOG_LEVEL_MSG="WARN: $*"
+        echo ""
+        loglevel_message_print
+    fi
+}
+debug() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
+        LOG_LEVEL_MSG="DEBUG: $*"
+        loglevel_message_print
+    fi
+}
+DEBUG() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
+        LOG_LEVEL_MSG="DEBUG: $*"
+        echo ""
+        loglevel_message_print
+    fi
+}
+debug2() {
+    if [[ $LOG_LEVEL -eq $LOG_LEVEL_DEBUG2 ]]; then
+        LOG_LEVEL_MSG="DEBUG2: $*"
+        loglevel_message_print
+    fi
+}
+
+ECHO() { echo; echo "$*"; }
+ask() { read -p "$*" answer; }
+ASK() { echo; read -p "$*" answer; }
+pause() { read -p "$*"; }
+PAUSE() { echo; read -p "$*"; }
 
 ###########################
 ### check args functions ##
@@ -161,13 +192,15 @@ fn_bbgl_check_args_search_flag() {
     debug "bbl-general: \$@ = \"$@\""
     FLAG_FOUND_VALUE=""
     for flag in $@; do
-        flag_found=$(echo "${flag}" | grep "\-\-${flag_name}=")
-        if [ -n "${flag_found}" ]; then
-            FLAG_FOUND_VALUE=$(echo "${flag_found}" | awk -F'=' '{print $2}')
-	        debug "bbl-general: \"${flag_name}\" flag = \"${FLAG_FOUND_VALUE}\" found"
-	        break
+        FLAG_FOUND=$(echo "${flag}" | grep -E "\-\-${flag_name}(=)?")
+        if [ -n "${FLAG_FOUND}" ]; then
+            FLAG_FOUND_VALUE=$(echo "${FLAG_FOUND}" | awk -F'=' '{print $2}')
+	        debug "bbl-general: \"${flag_name}\" FLAG_FOUND = \"${FLAG_FOUND}\""
+	        debug "bbl-general: \"${flag_name}\" FLAG_FOUNND_VALUE = \"${FLAG_FOUND_VALUE}\""
+	        return 0
         fi
     done
+    debug "No \"${flag_name}\" flag found"
 }
 fi
 
