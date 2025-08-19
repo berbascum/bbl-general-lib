@@ -65,65 +65,66 @@ fn_bbgl_config_log() {
 #####################
 ## Print functions ##
 #####################
-info() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_INFO ]]; then
-        echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-INFO() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_INFO ]]; then
-        echo; echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-warn() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_WARN ]]; then
-        echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-WARN() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_WARN ]]; then
-        echo; echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-debug() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_DEBUG ]]; then
-        echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-debug2() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_DEBUG2 ]]; then
-        echo "DEBUG2: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-DEBUG() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_DEBUG ]]; then
-        echo; echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-    fi
-}
-abort() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_ABORT ]]; then
-        echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 10 
-    fi
-}
-ABORT() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_ABORT ]]; then
-        echo; echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 10 
-    fi
-}
 error() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_ERROR ]]; then
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
         echo "ERROR: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
         exit 10
     fi
 }
 ERROR() {
-    if [[ $LOG_LEVEL -le $LOG_LEVEL_ERROR ]]; then
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
         echo; echo "ERROR: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
-        exit 1 
+        exit 1
     fi
 }
+abort() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
+        echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+        exit 10
+    fi
+}
+ABORT() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
+        echo; echo "ABORT: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+        exit 10
+    fi
+}
+info() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
+        echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+INFO() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
+        echo; echo "INFO:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+warn() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
+        echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+WARN() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
+        echo; echo "WARN:  $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+debug() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
+        echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+DEBUG() {
+    if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
+        echo; echo "DEBUG: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+debug2() {
+    if [[ $LOG_LEVEL -eq $LOG_LEVEL_DEBUG2 ]]; then
+        echo "DEBUG2: $*" | tee -a "${LOG_FULLPATH}/${LOG_FILE}" >&2
+    fi
+}
+
 ECHO() { echo; echo "$*"; }
 ask() { read -p "$*" answer; }
 ASK() { echo; read -p "$*" answer; }
@@ -135,14 +136,15 @@ PAUSE() { echo; read -p "$*"; }
 ########################
 fn_bbgl_config_log_level() {
     ## Set the log levels
-    readonly LOG_LEVEL_DEBUG2=0
-    readonly LOG_LEVEL_DEBUG=1
-    readonly LOG_LEVEL_INFO=2
-    readonly LOG_LEVEL_WARN=3
-    readonly LOG_LEVEL_ABORT=4
-    readonly LOG_LEVEL_ERROR=5
+    readonly LOG_LEVEL_ERROR=0
+    readonly LOG_LEVEL_ABORT=1
+    readonly LOG_LEVEL_WARN=2
+    readonly LOG_LEVEL_INFO=3
+    readonly LOG_LEVEL_DEBUG=4
+    readonly LOG_LEVEL_DEBUG2=5
     ## Search for the log-level flag in the arguments
     flag_name="log-level" fn_bbgl_check_args_search_flag $@
+
     [ -n "${FLAG_FOUND_VALUE}" ] && LOG_LEVEL="${FLAG_FOUND_VALUE}"
     ## Set the default log-level if not defined yet
     [ -z "${LOG_LEVEL}" ] && LOG_LEVEL=${LOG_LEVEL_INFO}
