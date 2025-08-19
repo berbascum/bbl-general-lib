@@ -188,11 +188,19 @@ PAUSE() { echo; read -p "$*"; }
 fn_bbgl_check_args_search_flag() {
     ## Search for flag in the main script arguments
     [ -n "${flag_name}" ] || error "${FUNCNAME[0]}: flag_name not defined from ${FUNCNAME[1]}"
-    debug "bbl-general: flag_name = \"$flag_name\""
-    debug "bbl-general: \$@ = \"$@\""
+    debug "bbl-general: Searching flag_name= \"$flag_name\""
+    debug "Flag type = ${FLAG_TYPE}"
+    debug2 "bbl-general: Script arguments: \$@ = \"$@\""
     FLAG_FOUND_VALUE=""
     for flag in $@; do
         FLAG_FOUND=$(echo "${flag}" | grep -E "\-\-${flag_name}(=)?")
+        if [ "${FLAG_TYPE}" == "empty" ]; then
+            FLAG_FOUND=$(echo "${flag}" \
+                | grep "\-\-${flag_name}$")
+        elif [ "${FLAG_TYPE}" == "value" ]; then
+            FLAG_FOUND=$(echo "${flag}" \
+                | grep "\-\-${flag_name}=.*")
+        fi
         if [ -n "${FLAG_FOUND}" ]; then
             FLAG_FOUND_VALUE=$(echo "${FLAG_FOUND}" | awk -F'=' '{print $2}')
 	        debug "bbl-general: \"${flag_name}\" FLAG_FOUND = \"${FLAG_FOUND}\""
