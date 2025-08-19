@@ -182,6 +182,14 @@ ASK() { echo; read -p "$*" answer; }
 pause() { read -p "$*"; }
 PAUSE() { echo; read -p "$*"; }
 
+## Help flag search
+fn_bbgl_help_check_flag() {
+    ## Search for the --help$ flag in the arguments
+    flag_name="help" fn_bbgl_check_args_search_flag $@
+    FLAG_HELP_FOUND="${FLAG_FOUND}"
+    [ -n "${FLAG_HELP_FOUND}" ] && help_quick && exit 0
+}
+
 ###########################
 ### check args functions ##
 ###########################
