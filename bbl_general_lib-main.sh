@@ -116,6 +116,7 @@ loglevel_message_print() {
         echo "${LOG_LEVEL_MSG}"
     fi
 }
+export -f loglevel_message_print
 
 error() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
@@ -124,6 +125,7 @@ error() {
         exit 1
     fi
 }
+export -f error
 ERROR() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_ERROR ]]; then
         LOG_LEVEL_MSG="ERROR: $*"
@@ -132,6 +134,7 @@ ERROR() {
         exit 1
     fi
 }
+export -f ERROR
 abort() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
         LOG_LEVEL_MSG="ABORT: $*"
@@ -139,6 +142,7 @@ abort() {
         exit 10
     fi
 }
+export -f abort
 ABORT() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_ABORT ]]; then
         LOG_LEVEL_MSG="ABORT: $*"
@@ -147,12 +151,14 @@ ABORT() {
         exit 10
     fi
 }
+export -f ABORT
 info() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
         LOG_LEVEL_MSG="INFO: $*"
         loglevel_message_print
     fi
 }
+export -f info
 INFO() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_INFO ]]; then
         LOG_LEVEL_MSG="INFO: $*"
@@ -160,12 +166,14 @@ INFO() {
         loglevel_message_print
     fi
 }
+export -f INFO
 warn() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
         LOG_LEVEL_MSG="WARN: $*"
         loglevel_message_print
     fi
 }
+export -f warn
 WARN() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_WARN ]]; then
         LOG_LEVEL_MSG="WARN: $*"
@@ -173,12 +181,14 @@ WARN() {
         loglevel_message_print
     fi
 }
+export -f WARN
 debug() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
         LOG_LEVEL_MSG="DEBUG: $*"
         loglevel_message_print
     fi
 }
+export -f debug
 DEBUG() {
     if [[ $LOG_LEVEL -ge $LOG_LEVEL_DEBUG ]]; then
         LOG_LEVEL_MSG="DEBUG: $*"
@@ -186,18 +196,25 @@ DEBUG() {
         loglevel_message_print
     fi
 }
+export -f DEBUG
 debug2() {
     if [[ $LOG_LEVEL -eq $LOG_LEVEL_DEBUG2 ]]; then
         LOG_LEVEL_MSG="DEBUG2: $*"
         loglevel_message_print
     fi
 }
+export -f debug2
 
 ECHO() { echo; echo "$*"; }
+export -f ECHO
 ask() { read -p "$*" answer; }
+export -f ask
 ASK() { echo; read -p "$*" answer; }
+export -f ASK
 pause() { read -p "$*"; }
+export -f pause
 PAUSE() { echo; read -p "$*"; }
+export -f PAUSE
 
 ## Help flag search
 fn_bbgl_help_check_flag() {
