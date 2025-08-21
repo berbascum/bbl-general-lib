@@ -48,11 +48,9 @@ fn_header_info() {
 }
 #[HEADER_END]
 
-if [ "${BBL_LOAD_STAGE}" == "log-level" ] \
-|| [ -z "${BBL_LOAD_STAGE}" ]; then
-## Enable sudo for non root users
-fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
+BBL_LOAD_FN_GROUP="$1"
 
+if [ "${BBL_LOAD_FN_GROUP}" == "verbose" ]; then
 ####################################
 ## debug functions: log/log-level ##
 ####################################
@@ -224,6 +222,7 @@ fn_bbgl_help_check_flag() {
     [ -n "${FLAG_HELP_FOUND}" ] && help_quick && exit 0
 }
 
+elif [ "${BBL_LOAD_FN_GROUP}" == "script-args" ]; then
 ###########################
 ### check args functions ##
 ###########################
@@ -252,53 +251,14 @@ fn_bbgl_check_args_search_flag() {
     done
     debug "No \"${flag_name}\" flag found"
 }
-fi
 
-if [ -z "${BBL_LOAD_STAGE}" ]; then
-#######################
-## Control functions ##
-#######################
-fn_bbgl_check_bash_ver() {
-    bash_ver=$(bash --version | head -n 1 \
-	| awk '{print $4}' | awk -F'(' '{print $1}' | awk -F'.' '{print $1"."$2"."$3}')
-    #IFS_BKP=$IFS
-    IFS='.' read -r vt_major vt_minor vt_patch <<< "${TESTED_BASH_VER}"
-    IFS='.' read -r v_major v_minor v_patch <<< "${bash_ver}"
-    IFS=$' \t\n'
-    #IFS=$IFS_BKP
-    if [[ $v_major -lt $vt_major ]] || \
-        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -lt $vt_minor ]]) || \
-        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -eq $vt_minor ]] \
-	    && [[ $v_patch -lt $vt_patch ]]); then
-        clear
-        WARN "bbl-general: Bash version detected is lower than the tested version"
-        warn "bbl-general: If errors are found, try upgrading bash to \"${TESTED_BASH_VER}\" version"
-	    pause "bbl-general: Press Inro to continue"
-    else
-        INFO "bbl-general: Bash version requirements are fine"
-    fi
-}
+elif [ "${BBL_LOAD_FN_GROUP}" == "environment" ]; then
+###########################
+## Environment functions ##
+###########################
+## Enable sudo for non root users
+fn_bbgl_configura_sudo() { [ "$USER" != "root" ] && SUDO='sudo'; }
 
-######################
-## Config functions ##
-######################
-fn_ask_write_not_set_vars_in_file() {
-    ## Search for empty vars in the device config file
-    for var in $(cat "${install_file}"); do
-        var_not_set=$(echo "${var}" | grep -v "#" | grep -v "=\"" | grep "=")
-	if [ -n "${var_not_set}" ]; then
-	   info "bbl-general: var_not_set = $var_not_set"
-	   ask "bbl-general: \"${var_not_set}\" name is not configured. Please type it: "
-           [ -n "${answer}" ] && sed -i \
-	       "s/${var_not_set}/${var_not_set}\"${answer}\"/g" "${install_file}"
-	    fi
-    done
-    source "${dev_info_install_fullpath}/${device_info_filename}"
-}
-
-############################################
-## FUNCIONS EINA CONF FILE PARSE SECCIONS ##
-############################################
 fn_bbgl_ifs_2_newline() {
     ## Config ICF to set array with spaced strings on each position value.
     if [ "${1}" == "" ]; then
@@ -357,6 +317,44 @@ fn_bssf_menu_fzf() {
     echo && echo "Executant funció def de plugin \"${FN_PLUGIN}\""
     eval ${FN_PLUGIN}
 CALL_SAMPLES
+}
+fn_bbgl_check_bash_ver() {
+    bash_ver=$(bash --version | head -n 1 \
+	| awk '{print $4}' | awk -F'(' '{print $1}' | awk -F'.' '{print $1"."$2"."$3}')
+    #IFS_BKP=$IFS
+    IFS='.' read -r vt_major vt_minor vt_patch <<< "${TESTED_BASH_VER}"
+    IFS='.' read -r v_major v_minor v_patch <<< "${bash_ver}"
+    IFS=$' \t\n'
+    #IFS=$IFS_BKP
+    if [[ $v_major -lt $vt_major ]] || \
+        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -lt $vt_minor ]]) || \
+        ([[ $v_major -eq $vt_major ]] && [[ $v_minor -eq $vt_minor ]] \
+	    && [[ $v_patch -lt $vt_patch ]]); then
+        clear
+        WARN "bbl-general: Bash version detected is lower than the tested version"
+        warn "bbl-general: If errors are found, try upgrading bash to \"${TESTED_BASH_VER}\" version"
+	    pause "bbl-general: Press Inro to continue"
+    else
+        INFO "bbl-general: Bash version requirements are fine"
+    fi
+}
+
+elif [ "${BBL_LOAD_FN_GROUP}" == "conf-files" ]; then
+############################################
+## FUNCIONS EINA CONF FILE PARSE SECCIONS ##
+############################################
+fn_ask_write_not_set_vars_in_file() {
+    ## Search for empty vars in the device config file
+    for var in $(cat "${install_file}"); do
+        var_not_set=$(echo "${var}" | grep -v "#" | grep -v "=\"" | grep "=")
+	if [ -n "${var_not_set}" ]; then
+	   info "bbl-general: var_not_set = $var_not_set"
+	   ask "bbl-general: \"${var_not_set}\" name is not configured. Please type it: "
+           [ -n "${answer}" ] && sed -i \
+	       "s/${var_not_set}/${var_not_set}\"${answer}\"/g" "${install_file}"
+	    fi
+    done
+    source "${dev_info_install_fullpath}/${device_info_filename}"
 }
 
 fn_bbgl_parse_file_section() {
@@ -562,4 +560,6 @@ fn_bbgl_parse_file_section() {
 
 CALL_SAMPLES
 }
-fi
+else # FUNCTION GROUPS
+    echo "bbl-general-lib: A function group is required as arg 1 when sourcing!"
+fi # FUNCTION GROUPS
