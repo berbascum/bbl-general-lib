@@ -2,8 +2,8 @@
 
 ## berb-bash-libs general functions
 #
-# Upstream-Name: berb-bash-libs
-# Source: https://github.com/berbascum/berb-bash-libs
+# Upstream-Name: bbl-general-lib
+# Source: https://github.com/berbascum/bbl-general-lib
 #
 # Copyright (C) 2024 Berbascum <berbascum@ticv.cat>
 # All rights reserved.
