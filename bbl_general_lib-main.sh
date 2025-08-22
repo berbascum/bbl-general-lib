@@ -63,6 +63,7 @@ fn_bbgl_config_log_level() {
     readonly LOG_LEVEL_DEBUG=4
     readonly LOG_LEVEL_DEBUG2=5
     ## Search for the log-level flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="value"
     flag_name="log-level" fn_bbgl_check_args_search_flag $@
 
     [ -n "${FLAG_FOUND_VALUE}" ] && LOG_LEVEL="${FLAG_FOUND_VALUE}"
@@ -84,6 +85,7 @@ fn_bbgl_help_log_level() {
 
 fn_bbgl_config_log() {
     ## Search for the log-level flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
     flag_name="log-enable" fn_bbgl_check_args_search_flag $@
     [ -n "${FLAG_FOUND}" ] || return 0
     ## Prepare log file
@@ -217,6 +219,7 @@ export -f PAUSE
 ## Help flag search
 fn_bbgl_help_check_flag() {
     ## Search for the --help$ flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
     flag_name="help" fn_bbgl_check_args_search_flag $@
     FLAG_HELP_FOUND="${FLAG_FOUND}"
     [ -n "${FLAG_HELP_FOUND}" ] && help_quick && exit 0
@@ -246,10 +249,16 @@ fn_bbgl_check_args_search_flag() {
             FLAG_FOUND_VALUE=$(echo "${FLAG_FOUND}" | awk -F'=' '{print $2}')
 	        debug "bbl-general: \"${flag_name}\" FLAG_FOUND = \"${FLAG_FOUND}\""
 	        debug "bbl-general: \"${flag_name}\" FLAG_FOUNND_VALUE = \"${FLAG_FOUND_VALUE}\""
+            ## Avoid false FLAG_TYPE definitions
+            debug "Unsetting FLAG_TYPE"
+            unset FLAG_TYPE
 	        return 0
         fi
     done
     debug "No \"${flag_name}\" flag found"
+    ## Avoid false FLAG_TYPE definitions
+    debug "Unsetting FLAG_TYPE"
+    unset FLAG_TYPE
 }
 
 elif [ "${BBL_LOAD_FN_GROUP}" == "environment" ]; then
