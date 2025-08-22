@@ -237,7 +237,6 @@ fn_bbgl_check_args_search_flag() {
     debug2 "bbl-general: Script arguments: \$@ = \"$@\""
     FLAG_FOUND_VALUE=""
     for flag in $@; do
-        FLAG_FOUND=$(echo "${flag}" | grep -E "\-\-${flag_name}(=)?")
         if [ "${FLAG_TYPE}" == "empty" ]; then
             FLAG_FOUND=$(echo "${flag}" \
                 | grep "\-\-${flag_name}$")
