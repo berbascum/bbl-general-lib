@@ -70,7 +70,7 @@ fn_bbgl_config_log_level() {
     ## Set the default log-level if not defined yet
     [ -z "${LOG_LEVEL}" ] && LOG_LEVEL=${LOG_LEVEL_INFO}
 }
-## Helo for log-level flag
+## Help for log-level flag
 fn_bbgl_help_log_level() {
     echo "* --log-level=<int>"
     echo "    This flag sets the log level"
@@ -96,7 +96,7 @@ fn_bbgl_config_log() {
     echo > "${LOG_FULLPATH}/${LOG_FILE}"
     LOG_ENABLED="true"
 }
-## Helo for log-enable flag
+## Help for log-enable flag
 fn_bbgl_help_log_enable() {
     echo "* --log-enable"
     echo "    This flag enables the log file feature"
