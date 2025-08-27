@@ -1,15 +1,8 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: bbl-general-lib
-Source: https://github.com/berbascum/bbl-general-lib
-
-Files: *
 Copyright (c) 2024, berbascum <berbascum@ticv.cat>
 All rights reserved.
-License: BSD-3-clause
 
-Files: debian/*
-Copyright: 2024 berbascum <berbascum@ticv.cat>
-License: BSD-3-clause
+Upstream-Name: bbl-general-lib
+Source: https://github.com/berbascum/bbl-general-lib
 
 BSD 3-Clause License
 Redistribution and use in source and binary forms, with or without
