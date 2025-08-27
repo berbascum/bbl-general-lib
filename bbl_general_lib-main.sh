@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 ## berb-bash-libs general functions
 #
