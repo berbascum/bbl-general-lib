@@ -25,6 +25,7 @@ if [ "$1" == "load_pkg_metadata" ]; then
     TOOL_LANG="bash"
     TOOL_RELEASE="testing"
     TOOL_URGENCY="low"
+    TOOL_DEPENDS="curl,jq,awk"
     return 0
 fi
 
