@@ -16,17 +16,19 @@
 
 
 #[HEADER_SECTION]
-fn_header_info() {
-    BIN_TYPE="lib"
-    BIN_SRC_TYPE="bash"
-    BIN_SRC_EXT="sh"
-    BIN_NAME="bbl_general_lib"
+if [ "$1" == "load_pkg_metadata" ]; then
+    echo "Loading package metadata..."
+    TOOL_NAME="bbl_general_lib"
     TOOL_VERSION="1.1.2.1"
-    TOOL_VERSION_INT="1121"
+    TOOL_REVISION="1"
+    TOOL_VERSION_INT="$(echo ${TOOL_VERSION} | tr -d ".")"
+    TOOL_LANG="bash"
     TOOL_RELEASE="testing"
-    URGENCY='optional'
-    TESTED_BASH_VER='5.2.15'
-}
+    TOOL_URGENCY="optional"
+    return 0
+fi
+
+TESTED_BASH_VER='5.2.15'
 #[HEADER_END]
 
 BBL_LOAD_FN_GROUP="$1"
