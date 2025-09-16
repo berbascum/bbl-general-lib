@@ -24,7 +24,7 @@ if [ "$1" == "load_pkg_metadata" ]; then
     TOOL_VERSION_INT="$(echo ${TOOL_VERSION} | tr -d ".")"
     TOOL_LANG="bash"
     TOOL_RELEASE="testing"
-    TOOL_URGENCY="optional"
+    TOOL_URGENCY="low"
     return 0
 fi
 
