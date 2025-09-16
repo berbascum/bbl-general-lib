@@ -29,6 +29,7 @@ if [ "$1" == "load_pkg_metadata" ]; then
 fi
 
 TESTED_BASH_VER='5.2.15'
+export BBL_GENERAL_SOURCED="yes"
 #[HEADER_END]
 
 BBL_LOAD_FN_GROUP="$1"
