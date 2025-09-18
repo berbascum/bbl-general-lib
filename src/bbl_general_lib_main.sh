@@ -333,6 +333,17 @@ fn_bbgl_check_bash_ver() {
 }
 
 elif [ "${BBL_LOAD_FN_GROUP}" == "conf-files" ]; then
+#############################
+## FUNCIONS EINA json FILE ##
+#############################
+bblgeneral_get_json_key_value() {
+    key="$1"
+    file="$2"
+
+    key_value="$(jq -r "${key}" ${file})"
+    [ "${key_value}" != "null" ] || error "Missing or corrupt \"${key}\" key in the \"${file}\" file"
+}
+
 ############################################
 ## FUNCIONS EINA CONF FILE PARSE SECCIONS ##
 ############################################
