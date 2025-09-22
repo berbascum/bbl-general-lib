@@ -341,7 +341,7 @@ bblgeneral_get_json_key_value() {
     file="$2"
 
     key_value="$(jq -r "${key}" ${file})"
-    [ "${key_value}" != "null" ] || error "Missing or corrupt \"${key}\" key in the \"${file}\" file"
+    [ -n "${key_value}" -a  "${key_value}" != "null" ] || error "Missing or corrupt \"${key}\" key in the \"${file}\" file"
 }
 
 ############################################
