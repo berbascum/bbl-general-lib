@@ -220,6 +220,7 @@ fn_bbgl_check_args_search_flag() {
     debug "bbl-general: Searching flag_name= \"$flag_name\""
     debug "Flag type = ${FLAG_TYPE}"
     debug2 "bbl-general: Script arguments: \$@ = \"$@\""
+    FLAG_FOUND=""
     FLAG_FOUND_VALUE=""
     for flag in $@; do
         if [ "${FLAG_TYPE}" == "empty" ]; then
