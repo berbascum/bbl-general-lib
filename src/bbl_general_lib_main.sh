@@ -374,6 +374,7 @@ fn_bbgl_parse_file_section() {
     ## so probably will be deprecated
     #
     ## Configure parser
+    file_2_parse="$1"
     section="$2"
     parse_action="$3"
     [ -z "${section}" ] && ERROR "bbl-general: A section name is needed as argument \"2\""
@@ -397,13 +398,17 @@ fn_bbgl_parse_file_section() {
         fi
     ## Configuration of any other section than "HEADER_SECTION"
     elif [ "$section" != "HEADER_SECTION" ]; then
-        ## file_2_parse try default
-        file_2_parse=$(eval \
-             "echo \${"${1}"_FULLPATH_FILENAME}")
-        ## file_2_parse try alternatives
-        if [ ! -f "${file_2_parse}" ]; then
+        ## file_2_parse try default: regular filename
+        if [ -f "${file_2_parse}" ]; then
+            echo "file_to_parse found: ${file_to_parse}"
+        else
+            ## file_2_parse try substvar
             file_2_parse=$(eval \
-                "echo \${"${1}"_LOCAL_CFG_FILE}")
+                 "echo \${"${1}"_FULLPATH_FILENAME}")
+            ## try local substvar if aready not found
+            [ ! -f "${file_2_parse}" ] \
+                && file_2_parse=$(eval \
+                   "echo \${"${1}"_LOCAL_CFG_FILE}")
         fi
         ## DEBUG: ##
         #if [ "${section}" == "bblgit-check-ref" ]; then
