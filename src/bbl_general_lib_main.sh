@@ -87,6 +87,18 @@ fn_bbgl_help_log_enable() {
     echo "    This flag enables the log file feature"
 }
 
+fn_batch_mode_flag_check() {
+    ## Search for batch mode flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
+    flag_name="--batch" fn_bbgl_check_args_search_flag $@
+    [ -n "${FLAG_FOUND}" ] || return 0
+    BATCH_MODE="yes"
+}
+## Help for batch mode flag
+fn_bbgl_help_batch_mode() {
+    echo "* --batch"
+    echo "    This flag enables the batch mode"
+}
 #############################
 ## debug functions: prints ##
 #############################
