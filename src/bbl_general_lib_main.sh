@@ -412,7 +412,7 @@ fn_bbgl_parse_file_section() {
     elif [ "$section" != "HEADER_SECTION" ]; then
         ## file_2_parse try default: regular filename
         if [ -f "${file_2_parse}" ]; then
-            echo "file_to_parse found: ${file_to_parse}"
+            debug "file_2_parse found: ${file_2_parse}"
         else
             ## file_2_parse try substvar
             file_2_parse=$(eval \
