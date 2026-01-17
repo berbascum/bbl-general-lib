@@ -19,7 +19,7 @@
 if [ "$1" == "load_pkg_metadata" ]; then
     echo "Loading package metadata..."
     TOOL_NAME="bbl_general_lib"
-    TOOL_VERSION="1.1.2.1"
+    TOOL_VERSION="1.1.3.1"
     TOOL_REVISION="1"
     TOOL_VERSION_INT="$(echo ${TOOL_VERSION} | tr -d ".")"
     TOOL_LANG="bash"
