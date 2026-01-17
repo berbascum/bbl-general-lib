@@ -1,51 +1,36 @@
-#!/bin/bash
+#!/bin/env bash
 
-## berb-bash-libs general functions
+## berb-bash-libs general_lib_main:
+## Bash lib with general functions used by Berbascum's scripts.
+#
+# Copyright (c) 2024 Berbascum <berbascum@ticv.cat>
+# All rights reserved.
+# Licensed under the BSD 3-Clause License.
+#
+# See the LICENSE file in the project root,
+# or in the project repository:
+# https://github.com/berbascum/bbl-general-lib/LICENSE
 #
 # Upstream-Name: bbl-general-lib
 # Source: https://github.com/berbascum/bbl-general-lib
-#
-# Copyright (C) 2024 Berbascum <berbascum@ticv.cat>
-# All rights reserved.
-#
-# BSD 3-Clause License
-#
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright
-#      notice, this list of conditions and the following disclaimer in the
-#      documentation and/or other materials provided with the distribution.
-#    * Neither the name of the <organization> nor the
-#      names of its contributors may be used to endorse or promote products
-#      derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #[HEADER_SECTION]
-fn_header_info() {
-    BIN_TYPE="lib"
-    BIN_SRC_TYPE="bash"
-    BIN_SRC_EXT="sh"
-    BIN_NAME="bbl_general_lib"
-    TOOL_VERSION="1.1.1.1"
-    TOOL_VERSION_INT="1111"
+if [ "$1" == "load_pkg_metadata" ]; then
+    echo "Loading package metadata..."
+    TOOL_NAME="bbl_general_lib"
+    TOOL_VERSION="1.1.2.1"
+    TOOL_REVISION="1"
+    TOOL_VERSION_INT="$(echo ${TOOL_VERSION} | tr -d ".")"
+    TOOL_LANG="bash"
     TOOL_RELEASE="testing"
-    URGENCY='optional'
-    TESTED_BASH_VER='5.2.15'
-}
+    TOOL_URGENCY="low"
+    TOOL_DEPENDS="curl,jq,awk"
+    return 0
+fi
+
+TESTED_BASH_VER='5.2.15'
+export BBL_GENERAL_SOURCED="yes"
 #[HEADER_END]
 
 BBL_LOAD_FN_GROUP="$1"
@@ -63,13 +48,14 @@ fn_bbgl_config_log_level() {
     readonly LOG_LEVEL_DEBUG=4
     readonly LOG_LEVEL_DEBUG2=5
     ## Search for the log-level flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="value"
     flag_name="log-level" fn_bbgl_check_args_search_flag $@
 
     [ -n "${FLAG_FOUND_VALUE}" ] && LOG_LEVEL="${FLAG_FOUND_VALUE}"
     ## Set the default log-level if not defined yet
     [ -z "${LOG_LEVEL}" ] && LOG_LEVEL=${LOG_LEVEL_INFO}
 }
-## Helo for log-level flag
+## Help for log-level flag
 fn_bbgl_help_log_level() {
     echo "* --log-level=<int>"
     echo "    This flag sets the log level"
@@ -84,6 +70,7 @@ fn_bbgl_help_log_level() {
 
 fn_bbgl_config_log() {
     ## Search for the log-level flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
     flag_name="log-enable" fn_bbgl_check_args_search_flag $@
     [ -n "${FLAG_FOUND}" ] || return 0
     ## Prepare log file
@@ -94,12 +81,24 @@ fn_bbgl_config_log() {
     echo > "${LOG_FULLPATH}/${LOG_FILE}"
     LOG_ENABLED="true"
 }
-## Helo for log-enable flag
+## Help for log-enable flag
 fn_bbgl_help_log_enable() {
     echo "* --log-enable"
     echo "    This flag enables the log file feature"
 }
 
+fn_batch_mode_flag_check() {
+    ## Search for batch mode flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
+    flag_name="--batch" fn_bbgl_check_args_search_flag $@
+    [ -n "${FLAG_FOUND}" ] || return 0
+    BATCH_MODE="yes"
+}
+## Help for batch mode flag
+fn_bbgl_help_batch_mode() {
+    echo "* --batch"
+    echo "    This flag enables the batch mode"
+}
 #############################
 ## debug functions: prints ##
 #############################
@@ -217,6 +216,7 @@ export -f PAUSE
 ## Help flag search
 fn_bbgl_help_check_flag() {
     ## Search for the --help$ flag in the arguments
+    [ -n "${FLAG_TYPE}" ] || FLAG_TYPE="empty"
     flag_name="help" fn_bbgl_check_args_search_flag $@
     FLAG_HELP_FOUND="${FLAG_FOUND}"
     [ -n "${FLAG_HELP_FOUND}" ] && help_quick && exit 0
@@ -232,9 +232,9 @@ fn_bbgl_check_args_search_flag() {
     debug "bbl-general: Searching flag_name= \"$flag_name\""
     debug "Flag type = ${FLAG_TYPE}"
     debug2 "bbl-general: Script arguments: \$@ = \"$@\""
+    FLAG_FOUND=""
     FLAG_FOUND_VALUE=""
     for flag in $@; do
-        FLAG_FOUND=$(echo "${flag}" | grep -E "\-\-${flag_name}(=)?")
         if [ "${FLAG_TYPE}" == "empty" ]; then
             FLAG_FOUND=$(echo "${flag}" \
                 | grep "\-\-${flag_name}$")
@@ -246,10 +246,16 @@ fn_bbgl_check_args_search_flag() {
             FLAG_FOUND_VALUE=$(echo "${FLAG_FOUND}" | awk -F'=' '{print $2}')
 	        debug "bbl-general: \"${flag_name}\" FLAG_FOUND = \"${FLAG_FOUND}\""
 	        debug "bbl-general: \"${flag_name}\" FLAG_FOUNND_VALUE = \"${FLAG_FOUND_VALUE}\""
+            ## Avoid false FLAG_TYPE definitions
+            debug "Unsetting FLAG_TYPE"
+            unset FLAG_TYPE
 	        return 0
         fi
     done
     debug "No \"${flag_name}\" flag found"
+    ## Avoid false FLAG_TYPE definitions
+    debug "Unsetting FLAG_TYPE"
+    unset FLAG_TYPE
 }
 
 elif [ "${BBL_LOAD_FN_GROUP}" == "environment" ]; then
@@ -340,6 +346,17 @@ fn_bbgl_check_bash_ver() {
 }
 
 elif [ "${BBL_LOAD_FN_GROUP}" == "conf-files" ]; then
+#############################
+## FUNCIONS EINA json FILE ##
+#############################
+bblgeneral_get_json_key_value() {
+    key="$1"
+    file="$2"
+
+    key_value="$(jq -r "${key}" ${file})"
+    [ -n "${key_value}" -a  "${key_value}" != "null" ] || error "Missing or corrupt \"${key}\" key in the \"${file}\" file"
+}
+
 ############################################
 ## FUNCIONS EINA CONF FILE PARSE SECCIONS ##
 ############################################
@@ -369,6 +386,7 @@ fn_bbgl_parse_file_section() {
     ## so probably will be deprecated
     #
     ## Configure parser
+    file_2_parse="$1"
     section="$2"
     parse_action="$3"
     [ -z "${section}" ] && ERROR "bbl-general: A section name is needed as argument \"2\""
@@ -392,13 +410,17 @@ fn_bbgl_parse_file_section() {
         fi
     ## Configuration of any other section than "HEADER_SECTION"
     elif [ "$section" != "HEADER_SECTION" ]; then
-        ## file_2_parse try default
-        file_2_parse=$(eval \
-             "echo \${"${1}"_FULLPATH_FILENAME}")
-        ## file_2_parse try alternatives
-        if [ ! -f "${file_2_parse}" ]; then
+        ## file_2_parse try default: regular filename
+        if [ -f "${file_2_parse}" ]; then
+            debug "file_2_parse found: ${file_2_parse}"
+        else
+            ## file_2_parse try substvar
             file_2_parse=$(eval \
-                "echo \${"${1}"_LOCAL_CFG_FILE}")
+                 "echo \${"${1}"_FULLPATH_FILENAME}")
+            ## try local substvar if aready not found
+            [ ! -f "${file_2_parse}" ] \
+                && file_2_parse=$(eval \
+                   "echo \${"${1}"_LOCAL_CFG_FILE}")
         fi
         ## DEBUG: ##
         #if [ "${section}" == "bblgit-check-ref" ]; then
