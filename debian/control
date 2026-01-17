@@ -2,14 +2,12 @@ Source: bbl-general-lib
 Maintainer: berbascum
 Section: libs
 Priority: optional
-Build-Depends: debhelper (>= 10), git
+Build-Depends: debhelper (>= 10),
                debhelper-compat (= 13),
 Standards-Version: 4.5.0.3
 
 Package: bbl-general-lib
 Section: libs
 Architecture: all
-
-Depends: ${misc:Depends}, ${shlibs:Depends}, @TOOL_DEPENDS@
-Urgency: @TOOL_URGENCY@
-Description: berbascum's bash general-functions
+Depends: ${misc:Depends},
+Description: berbascum's bash general functions
