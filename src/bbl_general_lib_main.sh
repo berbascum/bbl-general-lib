@@ -458,7 +458,7 @@ fn_bbgl_parse_file_section() {
         if [ "${section_found}" -eq "1" -a "${section_end}" -ne "1" ]; then
             debug2 "bbl-general: section_end var after 1st check = ${section_end}"
             ## Search section_end pattern in var
-            section_end=$(echo "${line}" | grep "^${str_end}" | grep -c -v "${section}")
+            section_end=$(echo "${line}" | grep "^${str_end}" | grep -c -v "${section}]")
             debug2 "bbl-general: section_end var search again result = ${section_end}"
             [ "${section_end}" -eq "1" ] \
                 && debug2 "bbl-general: section end FOUND after 2nd check: \"${section}\"" && break
