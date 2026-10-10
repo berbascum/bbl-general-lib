@@ -1,10 +1,8 @@
+BSD 3-Clause License
+
 Copyright (c) 2024, berbascum <berbascum@ticv.cat>
 All rights reserved.
 
-Upstream-Name: bbl-general-lib
-Source: https://github.com/berbascum/bbl-general-lib
-
-BSD 3-Clause License
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
