@@ -9,7 +9,7 @@
 #
 # See the LICENSE file in the project root,
 # or in the project repository:
-# https://github.com/berbascum/bbl-general-lib/LICENSE
+# https://github.com/berbascum/bbl-general-lib/blob/main/LICENSE
 #
 # Upstream-Name: bbl-general-lib
 # Source: https://github.com/berbascum/bbl-general-lib
